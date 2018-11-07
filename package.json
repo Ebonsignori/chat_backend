@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "drop_tables": "docker-compose run -e HANDLE_TABLES=DROP backend",
+    "create_tables": "docker-compose run -e HANDLE_TABLES=CREATE backend",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "pg": "^7.6.0",
+    "pgtools": "^0.3.0",
+    "socket.io": "^2.1.1"
+  }
+}
