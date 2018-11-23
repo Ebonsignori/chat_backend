@@ -1,4 +1,5 @@
-const pgtools = require('pgtools');
+const pgtools = require("pgtools");
+const logger = require("../utility/logging").logger;
 
 const config = {
     user: process.env.POSTGRES_USER,
@@ -10,24 +11,24 @@ const config = {
 async function createDatabase() {
     await pgtools.createdb(config, process.env.POSTGRES_DB).catch((err, res) => {
         if (err) {
-            console.log("Failed to create database: '%s'. Exiting", process.env.POSTGRES_DB);
-            console.error(err);
+            logger.error(`Failed to create database: ${process.env.POSTGRES_DB}. Exiting`);
+            logger.error(err);
             process.exit(-1);
         }
-        console.log("Database: '%s' created.", process.env.POSTGRES_DB);
-        console.log(res);
+        logger.info(`Database: ${process.env.POSTGRES_DB} created.`);
+        logger.debug(res);
     });
 }
 
 async function dropDatabase() {
     await pgtools.dropdb(config, process.env.POSTGRES_DB).catch((err, res) => {
         if (err) {
-            console.log("Failed to drop database: '%s'. Exiting", process.env.POSTGRES_DB);
-            console.error(err);
+            logger.error(`Failed to drop database: ${process.env.POSTGRES_DB}. Exiting`);
+            logger.error(err);
             process.exit(-1);
         }
-        console.log(res);
-        console.log("Database: '%s' dropped.", process.env.POSTGRES_DB);
+        logger.info(res);
+        logger.debug(`Database: ${process.env.POSTGRES_DB} dropped.`, process.env.POSTGRES_DB);
     });
 }
 

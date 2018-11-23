@@ -2,12 +2,16 @@ version: '2'
 
 services:
   backend:
-    command: ["node", "./index.js"]
-    build: .
+    command: ["node", "./js/index.js"]
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
     volumes:
     - .:/usr/src
     ports:
     - "3000:3000"
+    expose:
+    - "3000"
     depends_on:
     - postgres
     environment:

@@ -1,6 +1,0 @@
-version: '2'
-
-services:
-  backend:
-    environment:
-      NODE_ENV: development

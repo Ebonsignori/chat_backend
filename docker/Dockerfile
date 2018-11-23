@@ -5,7 +5,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src
 
 # Install packages
-COPY package.json /usr/src
+COPY ../package.json /usr/src
 RUN npm install --quiet
 
-COPY . /usr/src
+COPY .. /usr/src
