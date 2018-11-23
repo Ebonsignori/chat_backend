@@ -9,9 +9,9 @@ services:
     volumes:
     - .:/usr/src
     ports:
-    - "3000:3000"
+    - ${HTTP_PORT}:${HTTP_PORT}
     expose:
-    - "3000"
+    - ${HTTP_PORT}
     depends_on:
     - postgres
     environment:
@@ -19,6 +19,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      HTTP_PORT: ${HTTP_PORT}
+      FORCE_COLOR: ${FORCE_COLOR}
 
   postgres:
     image: postgres:10-alpine

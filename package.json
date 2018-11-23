@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^2.4.1",
     "express": "^4.15.2",
     "pg": "^7.6.0",
     "pgtools": "^0.3.0",

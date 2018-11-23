@@ -7,6 +7,7 @@ const db = require('./db/index');
 const table_management = require('./db/table_management');
 const onSocketConnect = require("./socket/socket_listeners").onSocketConnect;
 const logger = require("./utility/logging").logger;
+const chalk = require("chalk");
 
 async function main() {
     const pool = await db.initializeDatabase();
@@ -20,8 +21,11 @@ async function main() {
     io.on('connection', onSocketConnect);
 }
 
-http.listen(3000, function(){
-    logger.info('Backend is up and listening on *:3000');
+http.listen(process.env.HTTP_PORT, function(){
+    logger.info(chalk`
+      Backend is up and listening.
+      On port: {magenta.bold ${process.env.HTTP_PORT}}.
+    `);
 });
 
 
