@@ -34,22 +34,36 @@ router.post("/register", async function registerNewUser(req, res) {
         return;
     }
 
-    res.send(`User ${req.body.account_name} created!`).json({account_name: req.body.account_name});
+    res.json({account_name: req.body.account_name});
 });
 
-router.post("/login",
-    function(req, res, next) {
-        // TODO: Validate that uname and password were passed and match standards
-        // Populate username and password before passing it on to Passport.
-        req.query.username = req.body.account_name;
-        req.query.password = req.body.password;
-        next();
-    }, passport.authenticate('local', function(err, user, info) {
 
-    }),
-    async function login(req, res) {
-        // res.status(200).send(`User ${req.body.account_name} logged in.`).json(req.user);
-        res.json(req.user);
+router.post("/login", function(req, res, next) {
+    // TODO: Validate that uname and password were passed and match standards
+    // Populate username and password before passing it on to Passport.
+    req.query.username = req.body.account_name;
+    req.query.password = req.body.password;
+    passport.authenticate("local", function(err, user, info) {
+        console.log("TEST");
+        console.log(info);
+        if (err) {
+            console.log("TEST2");
+            return next(err)
+        }
+        if (!user) {
+            console.log("TEST3");
+
+            // *** Display message without using flash option
+            // re-render the login form with a message
+            return res.json({ message: info.message })
+        }
+        req.logIn(user, function(err) {
+            console.log("TEST4");
+
+            if (err) { return next(err); }
+            return res.json({ message: "good" })
+        });
+    })(req, res, next);
 });
 
 module.exports = router;
