@@ -2,10 +2,10 @@ version: '2'
 
 services:
   backend:
-    command: ["node", "./js/index.js"]
+    command: ["npm", "run", "start.dev"]
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: docker/Dockerfile
     volumes:
     - .:/usr/src
     ports:

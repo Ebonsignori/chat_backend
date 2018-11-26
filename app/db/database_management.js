@@ -1,5 +1,5 @@
 const pgtools = require("pgtools");
-const logger = require("../utility/logging").logger;
+const logger = require("../config/logging");
 
 const config = {
     user: process.env.POSTGRES_USER,

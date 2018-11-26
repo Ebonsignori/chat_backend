@@ -1,4 +1,4 @@
-const logger = require("../utility/logging").logger;
+const logger = require("../config/logging");
 const tables = require("./tables");
 const util = require('util');
 
@@ -28,17 +28,21 @@ async function createTables(pool) {
         - table[1] = Part of the query to create the table.
         - table[0] = The name of the table */
     for await (const table of Object.entries(tables)) {
-        await pool.query(`CREATE TABLE IF NOT EXISTS ${table[1]}`)
-            .then((res) => {
-                logger.debug(util.inspect(res, {showHidden: false, compact: false, colors: true}));
-                pool.end();
-            })
-            .catch((err) => {
-                logger.error(err);
-                pool.end();
-            });
+        let created = true;
+        try {
+            const res = await pool.query(`CREATE TABLE IF NOT EXISTS ${table[1]}`);
+            // logger.debug(util.inspect(res, {showHidden: false, compact: false, colors: true}));
+        } catch(err) {
+            logger.error(err);
+            pool.end();
+            created = false;
+        }
+        if (created) {
             logger.info(`Table: ${table[0]} created.`);
         }
+    }
+    // Close pool after creating tables
+    pool.end();
 }
 
 /* Drop Tables */
@@ -46,16 +50,26 @@ async function dropTables(pool) {
     if (!pool) {
         throw "Must pass pool after calling initializeDatabase";
     }
-    const queryText = "DROP TABLE IF EXISTS reflections";
-    await pool.query(queryText)
-        .then((res) => {
-            logger.debug(res);
-            pool.end();
-        })
-        .catch((err) => {
+
+    /* Drop each table using (key, value) pairs of (table_name, table_query) from tables.js
+         - table[1] = Part of the query to create the table.
+         - table[0] = The name of the table */
+    for await (const table of Object.entries(tables)) {
+        let dropped = true;
+        try {
+            const res = await pool.query(`DROP TABLE IF EXISTS ${table[1]}`);
+            // logger.debug(util.inspect(res, {showHidden: false, compact: false, colors: true}));
+        } catch(err) {
             logger.error(err);
             pool.end();
-        });
+            dropped = false;
+        }
+        if (dropped) {
+            logger.info(`Table: ${table[0]} dropped.`);
+        }
+    }
+    // Close pool after dropping tables
+    pool.end();
 }
 
 module.exports = {

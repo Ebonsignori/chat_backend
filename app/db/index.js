@@ -1,7 +1,7 @@
 const { Pool } = require("pg");
 const database_management = require("./database_management");
 const tables = require("./tables");
-const logger = require("../utility/logging").logger;
+const logger = require("../config/logging");
 
 let pool;
 

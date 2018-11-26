@@ -31,6 +31,4 @@ switch (process.env.LOGGING_LEVEL) {
         break;
 }
 
-module.exports = {
-    logger: logger
-};
+module.exports = logger;
