@@ -7,6 +7,7 @@ const passport = require("passport");
 const bcrypt = require('bcryptjs');
 const salt_rounds = 12;
 
+
 router.post("/register", async function registerNewUser(req, res) {
     // TODO Validate fields
 
@@ -34,7 +35,7 @@ router.post("/register", async function registerNewUser(req, res) {
         return;
     }
 
-    res.json({account_name: req.body.account_name});
+    res.status(200).json({account_name: req.body.account_name});
 });
 
 
@@ -43,27 +44,45 @@ router.post("/login", function(req, res, next) {
     // Populate username and password before passing it on to Passport.
     req.query.username = req.body.account_name;
     req.query.password = req.body.password;
-    passport.authenticate("local", function(err, user, info) {
-        console.log("TEST");
-        console.log(info);
+    passport.authenticate("local", function(err, user, message) {
         if (err) {
-            console.log("TEST2");
             return next(err)
         }
         if (!user) {
-            console.log("TEST3");
-
-            // *** Display message without using flash option
-            // re-render the login form with a message
-            return res.json({ message: info.message })
+            return res.status(401).send(message);
         }
         req.logIn(user, function(err) {
-            console.log("TEST4");
-
-            if (err) { return next(err); }
-            return res.json({ message: "good" })
+            if (err) {
+                return next(err);
+            }
+            logger.silly(`User ${req.user.account_name} has logged in.`);
+            return res.json(req.user);
         });
     })(req, res, next);
 });
 
+router.post("/logout", isLoggedIn, function(req, res) {
+    // TODO: Validate that uname matches session username before logging out
+    const acount_name = req.user.account_name ? req.user.account_name : "'No Match'";
+    logger.silly(`User ${acount_name} has logged out.`);
+    try {
+        req.logout();
+    } catch (err) {
+        res.status(400).send(`User ${acount_name} was unable to log out.`);
+        logger.error(err);
+    }
+    res.status(200).send(`User ${acount_name} has logged out.`);
+});
+
+
 module.exports = router;
+
+
+// Middleware for verify if user is logged in
+function isLoggedIn(req, res, next) {
+    if (req.user) {
+        next();
+    } else {
+        res.status(401).send("You are not logged in.");
+    }
+}

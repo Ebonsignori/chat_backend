@@ -24,7 +24,7 @@ module.exports = (passport) => {
 
             if (!results || results.rows.length < 1 || results.rows === undefined) {
                 logger.silly(`Account name DNE: ${username}`);
-                done_cb(null, false, { message: "Account dne." });
+                done_cb(null, false, "Account does not exist.");
                 return;
             }
 
@@ -37,7 +37,7 @@ module.exports = (passport) => {
                 done_cb(null, user_obj);
             } else {
                 logger.warn(`Incorrect password for account_name: ${username}`);
-                done_cb(null, false, { message: "Wrong password" });
+                done_cb(null, false, "Bad password.");
             }
         }));
 
@@ -49,18 +49,25 @@ module.exports = (passport) => {
     // serializing, and querying the user record by ID from the database when
     // deserializing.
     passport.serializeUser(function(user, cb) {
+        logger.silly(chalk`Serialize User: {red ${user.account_name}} With id: {red ${user.id}}`);
         cb(null, user.id);
     });
 
     passport.deserializeUser(async function(id, cb) {
-        logger.info(chalk`Deserialize Id: {red ${id}}`);
+        logger.silly(chalk`Deserialize Id: {red ${id}}`);
         try {
-            const results = await db.query(queries.fetch_user_by_id, id);
+            let results = await db.query(queries.users.fetch_user_by_id, [id]).catch((err) => {
+                logger.error("Error fetching user by id");
+                logger.error(err);
+                return cb(err);
+            });
+            const user_obj = results.rows[0];
+
+            // Remove password hash from user object
+            user_obj.password = "";
+            return cb(null, user_obj);
         } catch (err) {
             return cb(err);
         }
-        logger.info(chalk`deserializeUser fetch results: {red ${results}}`);
-
-        return cb(null, results)
     });
 };

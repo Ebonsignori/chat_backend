@@ -22,9 +22,6 @@ async function main() {
     // Initialize passport config
     require("./config/passport")(passport);
 
-    // Apply passport
-    app.use(passport.initialize());
-    app.use(passport.session());
     // Apply routes
     app.use("/", require("./routes"));
     // Apply 404 handler
@@ -43,8 +40,9 @@ async function main() {
     io.on("connection", onSocketConnect);
 }
 
-main().catch((error) => {
-    logger.error("FATAL: An uncaught error occurred:");
-    logger.error(error);
-    process.exit(0);
-});
+main();
+// .catch((error) => {
+//     logger.error("FATAL: An uncaught error occurred:");
+//     logger.error(error);
+//     process.exit(0);
+// });
