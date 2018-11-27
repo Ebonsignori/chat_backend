@@ -8,6 +8,7 @@ const onSocketConnect = require("./socket/socket_listeners").onSocketConnect;
 const logger = require("./config/logging");
 const chalk = require("chalk");
 const passport = require("passport");
+const shared_io_session = require("express-socket.io-session");
 
 async function main() {
     const pool = await db.initializeDatabase();
@@ -18,7 +19,7 @@ async function main() {
     }
 
     // Initialize express config
-    require("./config/express")(app);
+    const session = require("./config/express")(app);
     // Initialize passport config
     require("./config/passport")(passport);
 
@@ -37,6 +38,12 @@ async function main() {
 
     // Start websocket server
     const io = require("socket.io").listen(server);
+
+    // Use a shared session between express and socket-io
+    io.use(shared_io_session(session, {
+        autoSave: true
+    }));
+
     io.on("connection", onSocketConnect);
 }
 

@@ -21,7 +21,7 @@ module.exports = (app) => {
     if (process.env.NODE_ENV === "production") {
         app.set('trust proxy', 1); // trust first proxy
     }
-    const session_params = {
+    const express_session = session({
         name: 'sessionId',
         secret: process.env.COOKIE_SECRET,
         /* set up your cookie how you want */
@@ -36,9 +36,9 @@ module.exports = (app) => {
         }),
         resave: false,
         saveUninitialized: true
-    };
+    });
 
-    app.use(session(session_params));
+    app.use(express_session);
 
     // Apply passport
     app.use(passport.initialize());
@@ -52,6 +52,8 @@ module.exports = (app) => {
     app.use((req, res, next) => {
         logger.debug(chalk`Route called: {magenta ${req.url}}`);
         next();
-    })
+    });
+
+    return express_session;
 };
 
