@@ -19,7 +19,7 @@ async function listenForNewMessages(socket) {
         logger.silly(`Received Message: ${payload.message}`);
 
         // If user is logged in with a session
-        if (socket.handshake.session && socket.handshake.passport && socket.handshake.passport.user) {
+        if (socket.handshake.session && socket.handshake.session.passport && socket.handshake.session.passport.user) {
             // Insert message into database
             let insert_message_result = await db.query(queries.messages.insert_message, [payload.message, new Date()]).catch((err) => {
                 logger.error("Error in message insert");

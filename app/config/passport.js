@@ -24,7 +24,7 @@ module.exports = (passport) => {
 
             if (!results || results.rows.length < 1 || results.rows === undefined) {
                 logger.silly(`Account name DNE: ${username}`);
-                done_cb(null, false, "Account does not exist.");
+                done_cb(null, false, {user_dne: true});
                 return;
             }
 
@@ -37,7 +37,7 @@ module.exports = (passport) => {
                 done_cb(null, user_obj);
             } else {
                 logger.warn(`Incorrect password for account_name: ${username}`);
-                done_cb(null, false, "Bad password.");
+                done_cb(null, false, {bad_password: true});
             }
         }));
 

@@ -49,7 +49,13 @@ router.post("/login", function(req, res, next) {
             return next(err)
         }
         if (!user) {
-            return res.status(401).send(message);
+            if (message.user_dne) {
+                return res.status(404).send("Account name does not exist.");
+            }
+            if (message.bad_password) {
+                return res.status(403).send("Incorrect password.");
+            }
+            return res.status(500).send("Something went wrong while attempting to fetch your account. Please contact an admin.");
         }
         req.logIn(user, function(err) {
             if (err) {
